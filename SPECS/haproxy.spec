@@ -1,14 +1,18 @@
+# https://github.com/ITV/rpm-haproxy
 Summary: HA-Proxy is a TCP/HTTP reverse proxy for high availability environments
 Name: haproxy
-Version: 1.6.0
+Version: 1.7.2
 Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://haproxy.1wt.eu/
-Source0: http://haproxy.1wt.eu/download/1.5/src/devel/%{name}-%{version}.tar.gz
+Source0: http://haproxy.1wt.eu/download/1.7/src/devel/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: pcre-devel
+# to build using ubuntu
+#BuildRequires: pcre-devel
 Requires: /sbin/chkconfig, /sbin/service
+Requires(pre): /usr/sbin/useradd, /usr/bin/getent
+Requires(postun): /usr/sbin/userdel
 
 %description
 HA-Proxy is a TCP/HTTP reverse proxy which is particularly suited for high
@@ -33,7 +37,7 @@ risking the system's stability.
 %define __perl_requires /bin/true
 
 %build
-%{__make} USE_PCRE=1 DEBUG="" ARCH=%{_target_cpu} TARGET=linux26
+%{__make} USE_PCRE=1 USE_LINUX_TPROXY=1 USE_ZLIB=1 USE_REGPARM=1 USE_OPENSSL=1 DEBUG="" ARCH=%{_target_cpu} TARGET=linux2628 
 
 %install
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
@@ -50,7 +54,11 @@ risking the system's stability.
  
 %clean
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
- 
+
+%pre
+/usr/bin/getent group haproxy || /usr/sbin/groupadd -r haproxy
+/usr/bin/getent passwd haproxy || /usr/sbin/useradd -r -d /var/lib/haproxy -s /sbin/nologin haproxy -g haproxy
+
 %post
 /sbin/chkconfig --add %{name}
 
@@ -64,6 +72,8 @@ fi
 if [ "$1" -ge "1" ]; then
   /sbin/service %{name} condrestart >/dev/null 2>&1 || :
 fi
+/usr/sbin/groupdel haproxy
+/usr/sbin/userdel haproxy
 
 %files
 %defattr(-,root,root)
@@ -76,6 +86,12 @@ fi
 %attr(0755,root,root) %config %{_sysconfdir}/rc.d/init.d/%{name}
 
 %changelog
+* Tue Feb  6 2017 Tiago Cruz <tiago.cruz@movile.com>
+- updated to 1.7.2
+- changed to target linux2628 due to cpu-map and USE_CPU_AFFINITY
+- included user/group haproxy in package
+- added support to openssl
+
 * Tue Oct 13 2015 Willy Tarreau <w@1wt.eu>
 - updated to 1.6.0
 

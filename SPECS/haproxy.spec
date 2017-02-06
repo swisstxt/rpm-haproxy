@@ -8,7 +8,8 @@ Group: System Environment/Daemons
 URL: http://haproxy.1wt.eu/
 Source0: http://haproxy.1wt.eu/download/1.7/src/devel/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: pcre-devel
+# to build using ubuntu
+#BuildRequires: pcre-devel
 Requires: /sbin/chkconfig, /sbin/service
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
 Requires(postun): /usr/sbin/userdel

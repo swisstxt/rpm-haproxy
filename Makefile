@@ -9,7 +9,7 @@ clean:
 	mkdir -p ./rpmbuild/SPECS/ ./rpmbuild/SOURCES/
 
 download-upstream:
-	./download haproxy-${VERSION}.tar.gz http://www.haproxy.org/download/1.6/src/haproxy-${VERSION}.tar.gz
+	./download haproxy-${VERSION}.tar.gz http://www.haproxy.org/download/1.7/src/haproxy-${VERSION}.tar.gz
 
 build: clean download-upstream
 	mkdir -p ./SPECS/ ./SOURCES/

@@ -36,7 +36,7 @@ risking the system's stability.
 %define __perl_requires /bin/true
 
 %build
-%{__make} USE_PCRE=1 DEBUG="" ARCH=%{_target_cpu} TARGET=linux2628
+%{__make} USE_PCRE=1 USE_LINUX_TPROXY=1 USE_ZLIB=1 USE_REGPARM=1 USE_OPENSSL=1 DEBUG="" ARCH=%{_target_cpu} TARGET=linux2628 
 
 %install
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
@@ -89,6 +89,7 @@ fi
 - updated to 1.7.2
 - changed to target linux2628 due to cpu-map and USE_CPU_AFFINITY
 - included user/group haproxy in package
+- added support to openssl
 
 * Tue Oct 13 2015 Willy Tarreau <w@1wt.eu>
 - updated to 1.6.0
